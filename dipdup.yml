@@ -1,0 +1,56 @@
+spec_version: 1.2
+package: dipdup_indexer
+
+database:
+  kind: sqlite
+  path: zenith.sqlite3
+
+contracts:
+  zenith:
+    address: KT1G3QTC2Dzp38eNqdSSkNCE62mnK3mt3iWJ
+    typename: zenith
+  vUSD_test:
+    address: KT1D5xQy9x7YSgrzTzLJx9tEQ6qK9pSW2vfz
+    typename: vUSD
+
+datasources:
+  tzkt_ghostnet:
+    kind: tzkt
+    url: https://api.ghostnet.tzkt.io
+
+indexes:
+  ops:
+    kind: operation
+    contracts:
+      - zenith
+      - vUSD_test
+    datasource: tzkt_ghostnet
+    handlers:
+      - callback: on_increase_position
+        pattern:
+          - destination: zenith
+            entrypoint: increasePosition
+          - destinatiiion: vUSD_test
+            entrypoint: transfer
+      - callback: on_decrease_position
+        pattern:
+          - destination: zenith
+            entrypoint: decreasePosition
+      - callback: on_close_position
+        pattern:
+          - destination: zenith
+            entrypoint: closePosition
+          - destination: vUSD_test
+            entrypoint: transfer
+      - callback: on_add_margin
+        pattern:
+          - destination: zenith
+            entrypoint: addMargin
+          - destination: vUSD_test
+            entrypoint: transfer
+      - callback: on_remove_margin
+        pattern:
+          - destination: zenith
+            entrypoint: removeMargin
+          - destination: vUSD_test
+            entrypoint: transfer
