@@ -30,7 +30,7 @@ indexes:
         pattern:
           - destination: zenith
             entrypoint: increasePosition
-          - destinatiiion: vUSD_test
+          - destination: vUSD_test
             entrypoint: transfer
       - callback: on_decrease_position
         pattern:
