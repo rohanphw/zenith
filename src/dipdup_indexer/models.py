@@ -3,20 +3,20 @@ from dipdup.models import Model
 
 
 class User(Model):
-    address = fields.CharField(36, pk=True)
-    balance = fields.IntField()
+    address = fields.CharField(52, pk=True)
+    balance = fields.CharField(max_length=32)
 
 
 class IncreasePosition(Model):
     id = fields.IntField(pk=True)
     user = fields.ForeignKeyField('models.User', related_name='increase_positions')
-    amount = fields.IntField()
+    amount = fields.CharField(max_length=32)
 
 
 class DecreasePosition(Model):
     id = fields.IntField(pk=True)
     user = fields.ForeignKeyField('models.User', related_name='decrease_positions')
-    amount = fields.IntField()
+    amount = fields.CharField(max_length=32)
 
 
 class ClosePosition(Model):
@@ -27,10 +27,10 @@ class ClosePosition(Model):
 class AddMargin(Model):
     id = fields.IntField(pk=True)
     user = fields.ForeignKeyField('models.User', related_name='add_margins')
-    amount = fields.IntField()
+    amount = fields.CharField(max_length=32)
 
 
 class RemoveMargin(Model):
     id = fields.IntField(pk=True)
     user = fields.ForeignKeyField('models.User', related_name='remove_margins')
-    amount = fields.IntField()
+    amount = fields.CharField(max_length=32)
