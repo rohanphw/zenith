@@ -19,9 +19,6 @@ async def on_decrease_position(
     except DoesNotExist:
         user = await models.User.create(address=user_address, balance='0')
         print(user)
-    # print(decrease_position.data.id)
-    # print(user)
-    # print(decrease_position.storage.balances.get(user_address, '0'))
 
     try:
         decreasePosition = await models.DecreasePosition.get(id=decrease_position.data.id)
