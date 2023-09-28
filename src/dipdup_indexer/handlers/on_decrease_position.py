@@ -16,7 +16,6 @@ async def on_decrease_position(
 
     try:
         user = await models.User.get(address=user_address)
-        # user.balance = user_balance
     except DoesNotExist:
         user = await models.User.create(address=user_address, balance='0')
         print(user)
