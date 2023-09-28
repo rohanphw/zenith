@@ -5,6 +5,7 @@ from dipdup_indexer.types.vUSD.storage import VUSDStorage
 from dipdup_indexer.types.zenith.parameter.add_margin import AddMarginParameter
 from dipdup_indexer.types.zenith.storage import ZenithStorage
 from dipdup_indexer import models
+from tortoise.exceptions import DoesNotExist
 
 
 async def on_add_margin(
@@ -14,9 +15,22 @@ async def on_add_margin(
 ) -> None:
     user_address = add_margin.data.sender_address
     user_balance = transfer.storage.balances.get(user_address, '0').balance
-    user, _ = await models.User.get_or_create(address=user_address, balance=user_balance)
-    addMargin, _ = await models.AddMargin.get_or_create(
-        id=add_margin.data.id, user=user, amount=add_margin.parameter.vUSD_amount
-    )
+    try:
+        user = await models.User.get(address=user_address)
+    except DoesNotExist:
+        user = await models.User.create(address=user_address, balance=user_balance)
+
+    print(add_margin.data.id)
+    try:
+        addMargin = await models.AddMargin.get(id=add_margin.data.id)
+        print(addMargin)
+    except DoesNotExist:
+        addMargin = await models.AddMargin.create(
+            id=add_margin.data.id,
+            user=user,
+            amount=add_margin.parameter.__root__,
+        )
+
+    user.balance = user_balance
     await user.save()
     await addMargin.save()
