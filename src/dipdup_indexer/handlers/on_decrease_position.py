@@ -13,8 +13,6 @@ async def on_decrease_position(
     decrease_position: Transaction[DecreasePositionParameter, ZenithStorage],
 ) -> None:
     user_address = decrease_position.data.sender_address
-    # user_balance = decrease_position.storage.balances.get(user_address, '0').balance
-    # print(user_balance)
 
     try:
         user = await models.User.get(address=user_address)
