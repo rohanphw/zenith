@@ -29,6 +29,5 @@ async def on_decrease_position(
             amount=decrease_position.parameter.vUSD_amount,
         )
 
-    # user.balance = user_balance
     await user.save()
     await decreasePosition.save()
