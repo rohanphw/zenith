@@ -5,6 +5,7 @@ from dipdup_indexer.types.vUSD.storage import VUSDStorage
 from dipdup_indexer.types.zenith.parameter.remove_margin import RemoveMarginParameter
 from dipdup_indexer.types.zenith.storage import ZenithStorage
 from dipdup_indexer import models
+from tortoise.exceptions import DoesNotExist
 
 
 async def on_remove_margin(
@@ -14,11 +15,20 @@ async def on_remove_margin(
 ) -> None:
     user_address = remove_margin.data.sender_address
     user_balance = transfer.storage.balances.get(user_address, '0').balance
-    user, _ = await models.RemoveMargin.get_or_create(address=user_address, balance=user_balance)
-    removeMargin, _ = await models.RemoveMargin.get_or_create(
-        id=remove_margin.data.id, 
-        user=user, 
-        amount=remove_margin.parameter.vUSD_amount
-    )
+    try:
+        user = await models.User.get(address=user_address)
+    except DoesNotExist:
+        user = await models.User.create(address=user_address, balance=user_balance)
+    
+    try:
+        removeMargin = await models.RemoveMargin.get(id=remove_margin.data.id)
+    except DoesNotExist:
+        removeMargin = await models.RemoveMargin.create(
+            id=remove_margin.data.id,
+            user=user,
+            amount=remove_margin.parameter.__root__,
+        )
+
+    user.balance = user_balance
     await user.save()
     await removeMargin.save()

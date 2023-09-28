@@ -1,1 +1,1 @@
-dipdup>=6
+dipdup==6.5.11
