@@ -13,18 +13,12 @@ async def on_decrease_position(
     decrease_position: Transaction[DecreasePositionParameter, ZenithStorage],
 ) -> None:
     user_address = decrease_position.data.sender_address
-    # user_balance = decrease_position.storage.balances.get(user_address, '0').balance
-    # print(user_balance)
 
     try:
         user = await models.User.get(address=user_address)
-        # user.balance = user_balance
     except DoesNotExist:
         user = await models.User.create(address=user_address, balance='0')
         print(user)
-    # print(decrease_position.data.id)
-    # print(user)
-    # print(decrease_position.storage.balances.get(user_address, '0'))
 
     try:
         decreasePosition = await models.DecreasePosition.get(id=decrease_position.data.id)
@@ -35,6 +29,5 @@ async def on_decrease_position(
             amount=decrease_position.parameter.vUSD_amount,
         )
 
-    # user.balance = user_balance
     await user.save()
     await decreasePosition.save()
