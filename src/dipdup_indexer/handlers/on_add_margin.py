@@ -20,7 +20,12 @@ async def on_add_margin(
     except DoesNotExist:
         user = await models.User.create(address=user_address, balance=user_balance)
 
-    print(add_margin.data.id)
+    marked_price = add_margin.storage.current_mark_price
+    await models.MarkedPrice.create(
+        timestamp=add_margin.data.timestamp,
+        price=marked_price,
+    )
+
     try:
         addMargin = await models.AddMargin.get(id=add_margin.data.id)
         print(addMargin)

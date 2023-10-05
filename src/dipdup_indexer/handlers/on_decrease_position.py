@@ -20,6 +20,12 @@ async def on_decrease_position(
         user = await models.User.create(address=user_address, balance='0')
         print(user)
 
+    marked_price = decrease_position.storage.current_mark_price
+    await models.MarkedPrice.create(
+        timestamp=decrease_position.data.timestamp,
+        price=marked_price,
+    )
+
     try:
         decreasePosition = await models.DecreasePosition.get(id=decrease_position.data.id)
     except DoesNotExist:

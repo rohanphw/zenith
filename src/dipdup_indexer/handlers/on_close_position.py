@@ -20,6 +20,12 @@ async def on_close_position(
         user = await models.User.get(address=user_address)
     except DoesNotExist:
         user = await models.User.create(address=user_address, balance=user_balance)
+
+    marked_price = close_position.storage.current_mark_price
+    await models.MarkedPrice.create(
+        timestamp=close_position.data.timestamp,
+        price=marked_price,
+    )
     
     try:
         closePosition = await models.ClosePosition.get(id=close_position.data.id)

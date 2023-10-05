@@ -22,7 +22,6 @@ async def on_increase_position(
     except DoesNotExist:
         user = await models.User.create(address=user_address, balance=user_balance)
 
-    # create a new entry in MarkedPrice table
     marked_price = increase_position.storage.current_mark_price
     await models.MarkedPrice.create(
         timestamp=increase_position.data.timestamp,

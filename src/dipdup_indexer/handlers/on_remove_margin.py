@@ -19,6 +19,12 @@ async def on_remove_margin(
         user = await models.User.get(address=user_address)
     except DoesNotExist:
         user = await models.User.create(address=user_address, balance=user_balance)
+
+    marked_price = remove_margin.storage.current_mark_price
+    await models.MarkedPrice.create(
+        timestamp=remove_margin.data.timestamp,
+        price=marked_price,
+    )
     
     try:
         removeMargin = await models.RemoveMargin.get(id=remove_margin.data.id)
