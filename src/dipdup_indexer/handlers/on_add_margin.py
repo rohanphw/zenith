@@ -36,6 +36,23 @@ async def on_add_margin(
             amount=add_margin.parameter.__root__,
         )
 
+    position = add_margin.storage.positions[user_address]
+    pnl_exist = await models.PnL.filter(user=user, status='open').first()
+    if pnl_exist:
+        pnl_exist.collateral = position.collateral_amount
+        pnl_exist.position_size = position.vUSD_amount
+        await pnl_exist.save()
+    else:
+        await models.PnL.create(
+            user=user,
+            timestamp=add_margin.data.timestamp,
+            direction=position.position,
+            collateral=position.collateral_amount,
+            position_size=position.vUSD_amount,
+            realized_pnl='0',
+            status='open',
+        )
+
     user.balance = user_balance
     await user.save()
     await addMargin.save()

@@ -35,5 +35,22 @@ async def on_decrease_position(
             amount=decrease_position.parameter.vUSD_amount,
         )
 
+    position = decrease_position.storage.positions[user_address]
+    pnl_exist = await models.PnL.filter(user=user, status='open').first()
+    if pnl_exist:
+        pnl_exist.collateral = position.collateral_amount
+        pnl_exist.position_size = position.vUSD_amount
+        await pnl_exist.save()
+    else:
+        await models.PnL.create(
+            user=user,
+            timestamp=decrease_position.data.timestamp,
+            direction=position.position,
+            collateral=position.collateral_amount,
+            position_size=position.vUSD_amount,
+            realized_pnl='0',
+            status='open',
+        )
+
     await user.save()
     await decreasePosition.save()

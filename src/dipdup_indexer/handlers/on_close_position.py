@@ -35,5 +35,12 @@ async def on_close_position(
             user=user,
         )
 
+    transfer_amount = transfer.parameter.value
+    pnl_exist = await models.PnL.filter(user=user, status='open').first()
+    if pnl_exist:
+        pnl_exist.realized_pnl = transfer_amount
+        pnl_exist.status = 'close'
+        await pnl_exist.save()
+
     user.balance = user_balance
     await user.save()

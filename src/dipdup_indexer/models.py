@@ -40,3 +40,14 @@ class MarkedPrice(Model):
     id = fields.IntField(pk=True)
     price = fields.CharField(max_length=32)
     timestamp = fields.DatetimeField(auto_now_add=True)
+
+
+class PnL(Model):
+    id = fields.IntField(pk=True)
+    user = fields.ForeignKeyField('models.User', related_name='pnl')
+    timestamp = fields.DatetimeField(auto_now_add=True)
+    direction = fields.CharField(max_length=32)
+    collateral = fields.CharField(max_length=32)
+    position_size = fields.CharField(max_length=32)
+    realized_pnl = fields.CharField(max_length=32)
+    status = fields.CharField(max_length=32)

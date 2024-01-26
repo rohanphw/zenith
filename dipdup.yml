@@ -1,13 +1,17 @@
 spec_version: 1.2
 package: dipdup_indexer
 
+# database:
+#   kind: postgres
+#   host: ep-autumn-cake-51927058.us-west-2.aws.neon.tech
+#   port: 5432
+#   user: yash
+#   password: uLoCMsV10dqT
+#   database: neondb
+
 database:
-  kind: postgres
-  host: ep-autumn-cake-51927058.us-west-2.aws.neon.tech
-  port: 5432
-  user: yash
-  password: uLoCMsV10dqT
-  database: neondb
+  kind: sqlite
+  path: ./zenith.sqlite3
 
 contracts:
   zenith:
@@ -59,11 +63,11 @@ indexes:
           - destination: vUSD_test
             entrypoint: transfer
 
-hasura:
-  url: https://credible-anchovy-64.hasura.app
-  admin-secret: hz52ZxFb2ff6dgPW82rLfPPGOC43HyamKclABTSZkQb9g5fu5JD4oZqiuXKL63Id
-  allow_aggregations: false
-  camel_case: true
-  rest: true
-  select_limit: 100
-  source: default
+# hasura:
+#   url: https://credible-anchovy-64.hasura.app
+#   admin-secret: hz52ZxFb2ff6dgPW82rLfPPGOC43HyamKclABTSZkQb9g5fu5JD4oZqiuXKL63Id
+#   allow_aggregations: false
+#   camel_case: true
+#   rest: true
+#   select_limit: 100
+#   source: default
