@@ -20,6 +20,12 @@ async def on_decrease_position(
         user = await models.User.create(address=user_address, balance='0')
         print(user)
 
+    marked_price = decrease_position.storage.current_mark_price
+    await models.MarkedPrice.create(
+        timestamp=decrease_position.data.timestamp,
+        price=marked_price,
+    )
+
     try:
         decreasePosition = await models.DecreasePosition.get(id=decrease_position.data.id)
     except DoesNotExist:
@@ -27,6 +33,23 @@ async def on_decrease_position(
             id=decrease_position.data.id,
             user=user,
             amount=decrease_position.parameter.vUSD_amount,
+        )
+
+    position = decrease_position.storage.positions[user_address]
+    pnl_exist = await models.PnL.filter(user=user, status='open').first()
+    if pnl_exist:
+        pnl_exist.collateral = position.collateral_amount
+        pnl_exist.position_size = position.vUSD_amount
+        await pnl_exist.save()
+    else:
+        await models.PnL.create(
+            user=user,
+            timestamp=decrease_position.data.timestamp,
+            direction=position.position,
+            collateral=position.collateral_amount,
+            position_size=position.vUSD_amount,
+            realized_pnl='0',
+            status='open',
         )
 
     await user.save()
